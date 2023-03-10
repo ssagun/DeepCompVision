@@ -29,18 +29,29 @@ fill_mode='nearest')
 n = train_images.shape[0]
 
 # create 4 new images from existing training dataset by using data augmentation
-for i in range(n):
+def imgGen(i):
+    if(i % 1000 == 0): print(i)
+    global train_images, train_labels
     img = image.img_to_array(train_images[i])  # convert image to numpy arry
     img = img.reshape((1,) + img.shape)
     j = 0
+    if(i % 1000 == 0): print(i)
     for batch in datagen.flow(img, save_prefix='test', save_format='jpeg'):
         # append new augmented data to training set with the correct shape
-        train_images = np.append(train_images, np.reshape(batch[0], [1, 32, 32, 3]), axis = 0) 
+        train_images = np.append(train_images, np.reshape(batch[0], [1, 32, 32, 3]), axis = 0)
         train_labels = np.append(train_labels, np.reshape(train_labels[i], [1, 1]), axis = 0)
         j += 1
         if j > 3:  # stop after generating 4 variations of the each training image
            break
 
+# multiprocessing for faster image generation
+def run_multiprocessing(func, i, n_processors):
+    with Pool(processes=n_processors) as pool:
+        return pool.map(func, i)
+
+n_processors = 16
+x_ls = list(range(50000))
+out = run_multiprocessing(imgGen, x_ls, n_processors)
 # make model
 model = models.Sequential()
 model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
@@ -60,7 +71,7 @@ model.compile(optimizer='adam',
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
-history = model.fit(train_images, train_labels, epochs=4, 
+history = model.fit(train_images, train_labels, epochs=4,
                     validation_data=(test_images, test_labels))
 
 
