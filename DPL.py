@@ -7,6 +7,10 @@ from tensorflow.python.keras import datasets, layers, models
 from keras_preprocessing import image
 from keras_preprocessing.image import ImageDataGenerator
 
+import math
+from multiprocessing import Pool
+from multiprocessing import freeze_support
+
 (train_images, train_labels), (test_image, test_labels) = datasets.cifar10.load_data()
 
 # normalize data bw 0 and 1
