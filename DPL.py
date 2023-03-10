@@ -30,12 +30,10 @@ n = train_images.shape[0]
 
 # create 4 new images from existing training dataset by using data augmentation
 def imgGen(i):
-    if(i % 1000 == 0): print(i)
     global train_images, train_labels
     img = image.img_to_array(train_images[i])  # convert image to numpy arry
     img = img.reshape((1,) + img.shape)
     j = 0
-    if(i % 1000 == 0): print(i)
     for batch in datagen.flow(img, save_prefix='test', save_format='jpeg'):
         # append new augmented data to training set with the correct shape
         train_images = np.append(train_images, np.reshape(batch[0], [1, 32, 32, 3]), axis = 0)
