@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy as np
 
 import tensorflow as tf
@@ -7,7 +6,6 @@ from tensorflow.python.keras import datasets, layers, models
 from keras_preprocessing import image
 from keras_preprocessing.image import ImageDataGenerator
 
-import math
 from multiprocessing import Pool
 from multiprocessing import freeze_support
 
@@ -47,13 +45,15 @@ def imgGen(i):
            break
 
 # multiprocessing for faster image generation
+
+n_processors = 4
 def run_multiprocessing(func, i, n_processors):
     with Pool(processes=n_processors) as pool:
         return pool.map(func, i)
-
-n_processors = 16
 x_ls = list(range(50000))
 out = run_multiprocessing(imgGen, x_ls, n_processors)
+
+
 # make model
 model = models.Sequential()
 model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
